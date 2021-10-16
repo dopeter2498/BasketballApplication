@@ -1,6 +1,37 @@
 {% extends "layout.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 {% block content %}
-
-<h1> Scores </h1>
+<div class='scores-container'>
+  <div class='header'>
+    <h1> Scores </h1>
+  </div>
+  {{ wtf.quick_form(form) }}
+  <div class='scores-content'>
+    <table class="table">
+      <thead>
+        <tr>
+          {% for col in data[0].columns %}
+          {% if col.find('Unnamed') != -1 %}
+          <th scope="col"></th>
+          {% elif col.find('PTS') != -1 %}
+          <th scope="col">PTS</th>
+          {% else %}
+          <th scope="col">{{col}}</th>
+          {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for index in range(data[0] | length) %}
+        <tr>
+          {% for col in data[0].columns %}
+          <td>{{data[0][col][index]}}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 {% endblock %}
