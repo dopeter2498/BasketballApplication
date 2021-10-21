@@ -1,6 +1,70 @@
 {% extends "layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
   
-<h1>Welcome to Players Tab</h1>
-  
+<div class="players-container">
+  <div class="players-header">
+    <h1>Players</h1>
+  </div>
+  {{ wtf.quick_form(form) }}
+  {% if data %}
+  <div class="players-name">
+    <h2>{{ form.name.data | title }}</h2>
+  </div>
+  <div class="players-picture">
+    <img src={{ data[0] }} />
+  </div>
+  <div class="players-stats">
+    <div class="table-title">
+      <h3>Regular Season</h3>
+    </div>
+    <table class="table">
+      <tr>
+        {% for col in data[1].columns %}
+        <th scope="col">
+          {{ col }}
+        </th>
+        {% endfor %}
+      </tr>
+      <tbody>
+        {% for num in range(data[1] | length) %}
+        <tr>
+          {% for col in data[1].columns %}
+          <td>
+            {{ data[1][col][num] }}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="table-title">
+      <h3>Playoffs</h3>
+    </div>
+    {% if data[2] is not none %}
+    <table class="table">
+      <tr>
+        {% for col in data[2].columns %}
+        <th scope="col">
+          {{ col }}
+        </th>
+        {% endfor %}
+      </tr>
+      <tbody>
+        {% for num in range(data[2] | length) %}
+        <tr>
+          {% for col in data[2].columns %}
+          <td>
+            {{ data[2][col][num] }}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
 {% endblock %}

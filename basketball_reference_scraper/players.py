@@ -19,6 +19,8 @@ def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_mat
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
+        if table is None:
+            return None
         df = pd.read_html(str(table))[0]
         df.rename(columns={'Season': 'SEASON', 'Age': 'AGE',
                   'Tm': 'TEAM', 'Lg': 'LEAGUE', 'Pos': 'POS'}, inplace=True)
