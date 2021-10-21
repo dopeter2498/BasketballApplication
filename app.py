@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
+from basketball_reference_scraper import players as p
 from basketball_reference_scraper import seasons as s
 from basketball_reference_scraper import teams as t
 from basketball_reference_scraper import leaders as leader
@@ -7,13 +8,17 @@ from basketball_reference_scraper import drafts as d
 from basketball_reference_scraper.constants import TEAM_TO_TEAM_ABBR
 from datetime import date
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField
+from wtforms import SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
 bootstrap = Bootstrap(app)
+
+
+class player_search_form(FlaskForm):
+    name = StringField('Player Name:', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 
 class leaders_search_form(FlaskForm):
@@ -45,8 +50,8 @@ class draft_search_form(FlaskForm):
 def home():
     return render_template('index.html')
 
-  
-@app.route("/players")
+
+@app.route("/players", methods=['GET', 'POST'])
 def players():
     form = player_search_form()
     if form.is_submitted():
@@ -58,7 +63,6 @@ def players():
             ]
         return render_template('players.html', form=form, data=data)
     return render_template('players.html', form=form)
-
 
 
 @app.route("/teams", methods=['GET', 'POST'])
@@ -79,7 +83,6 @@ def teams_result(team):
     return render_template('/teams-result.html', roster=roster, team=team)
 
 
-
 @app.route("/seasons")
 def seasons():
     return render_template('seasons.html')
@@ -93,7 +96,6 @@ def leaders():
         return render_template('leaders.html', data=data, form=form)
     data = leader.get_season_leaders()
     return render_template('leaders.html', data=data, form=form)
-
 
 
 @app.route("/scores")
@@ -112,7 +114,6 @@ def draft():
         currYear += 1
     data = [d.get_draft_class(currYear-1), currYear-1]
     return render_template('draft.html', data=data, form=form)
-
 
 
 if __name__ == "__main__":
