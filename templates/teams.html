@@ -1,6 +1,35 @@
 {% extends "layout.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 {% block content %}
-
-<h1> Teams </h1>
-
+<div class='teams-container'>
+	<div class='header'>
+		<h1> Teams </h1>
+	</div>
+	<div class='teams-standings'>
+		<table class='table'>
+			<thead>
+        {% for key in data.keys() %}
+        <tr>
+          {% for item in data[key].columns %}
+              <th scope="col">{{item}}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+        <tbody>
+            {% for index in range(data[key] | length) %}
+              <tr>
+                {% for col in data[key].columns %}
+                  {% if col == 'TEAM' %}
+                  <td><a href={{ url_for('teams_result',team=data[key][col][index]) }}>{{data[key][col][index]}}</a></td>
+                  {% else %}  
+                    <td>{{data[key][col][index]}}</td>
+                  {% endif %}  
+                {% endfor %}
+              </tr>
+          {% endfor %}
+        {% endfor %}
+			  </tbody>
+      </table>
+    </div>
+  </div>
 {% endblock %}

@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block content %}
+
+<style>
+td,
+th {
+    border: 1px solid rgb(190, 190, 190);
+    padding: 10px;
+}
+
+td {
+    text-align: center;
+    white-space: nowrap;
+    width: 50px;
+}
+
+
+th[scope="col"] {
+    background-color: #696969;
+    color: #fff;
+}
+
+th[scope="row"] {
+    background-color: #d7d9f2;
+}
+
+table {
+    border-collapse: collapse;
+    border: 2px solid rgb(200, 200, 200);
+    letter-spacing: 1px;
+    font-family: sans-serif;
+    font-size: .8rem;
+}
+</style>
+<div class='teams-container'>
+	<div class='header'>
+    <h1>{{team}}</h1>
+	</div>
+	<div class='teams-standings'>
+		<table class='table'>
+      <thead>
+        <tr>
+          {% for col in roster %}
+          <th scope="col">{{col}}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for index in range(roster | length) %}
+      <tr>
+        {% for col in roster.columns %}
+        <td>{{roster[col][index]}}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+      </tbody>
+      </table>
+    </div>
+  </div>
+  {% endblock %}
