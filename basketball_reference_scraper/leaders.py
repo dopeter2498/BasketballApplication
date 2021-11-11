@@ -12,7 +12,7 @@ def get_season_leaders(season=None):
         else:
             season = date.year
     df = pd.DataFrame()
-    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season}_totals.html&div=div_totals_stats')
+    r = get(f'https://www.basketball-reference.com/leagues/NBA_{season}_totals.html')
     soup = BeautifulSoup(r.content, 'html.parser')
     table = soup.find('table')
     df = pd.read_html(str(table))[0]

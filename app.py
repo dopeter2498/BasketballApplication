@@ -19,7 +19,7 @@ class leaders_search_form(FlaskForm):
                 'Season:',
                 choices=[year for year in range(currYear, 1949, -1)],
                 validators=[DataRequired()]
-            )
+           )
     submit = SubmitField('Submit')
 
 
