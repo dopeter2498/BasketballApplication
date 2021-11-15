@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from basketball_reference_scraper import seasons as s
 from basketball_reference_scraper import teams as t
 from basketball_reference_scraper import leaders as leader
-from basketball_reference_scraper import constants 
+from basketball_reference_scraper import drafts as d
 from basketball_reference_scraper.constants import TEAM_TO_TEAM_ABBR
 from datetime import date
 from flask_wtf import FlaskForm
@@ -28,6 +28,18 @@ class leaders_search_form(FlaskForm):
     submit = SubmitField('Submit')
 
 
+class draft_search_form(FlaskForm):
+    currYear = date.today().year
+    if (date.today().month > 7):
+        currYear += 1
+    year = SelectField(
+                'Class:',
+                choices=[year for year in range(currYear-1, 1949, -1)],
+                validators=[DataRequired()]
+           )
+    submit = SubmitField('Submit')
+
+
 @app.route("/")
 @app.route("/index")
 def home():
@@ -38,13 +50,13 @@ def home():
 def players():
     return render_template('players.html')
 
-  
+
 @app.route("/teams", methods=['GET', 'POST'])
-def teams():                                       
+def teams():
     data = s.get_standings()
     return render_template('teams.html', data=data)
 
-  
+
 @app.route("/teams-result/<string:team>", methods=['GET', 'POST'])
 def teams_result(team):
     currYear = date.today().year
@@ -53,7 +65,7 @@ def teams_result(team):
     for key in TEAM_TO_TEAM_ABBR:
         if key == team.upper():
             teamAbbr = TEAM_TO_TEAM_ABBR[key]
-    roster = t.get_roster_stats(teamAbbr,currYear)
+    roster = t.get_roster_stats(teamAbbr, currYear)
     return render_template('/teams-result.html', roster=roster, team=team)
 
 
@@ -77,9 +89,17 @@ def scores():
     return render_template('scores.html')
 
 
-@app.route("/draft")
+@app.route("/draft", methods=['GET', 'POST'])
 def draft():
-    return render_template('draft.html')
+    form = draft_search_form()
+    if form.validate_on_submit():
+        data = [d.get_draft_class(form.year.data), form.year.data]
+        return render_template('draft.html', data=data, form=form)
+    currYear = date.today().year
+    if (date.today().month > 7):
+        currYear += 1
+    data = [d.get_draft_class(currYear-1), currYear-1]
+    return render_template('draft.html', data=data, form=form)
 
 
 if __name__ == "__main__":
