@@ -45,10 +45,20 @@ class draft_search_form(FlaskForm):
 def home():
     return render_template('index.html')
 
-
+  
 @app.route("/players")
 def players():
-    return render_template('players.html')
+    form = player_search_form()
+    if form.is_submitted():
+        name = form.name.data
+        data = [
+            p.get_player_headshot(name, False),
+            p.get_stats(name, 'PER_GAME', False, False, False),
+            p.get_stats(name, 'PER_GAME', True, False, False)
+            ]
+        return render_template('players.html', form=form, data=data)
+    return render_template('players.html', form=form)
+
 
 
 @app.route("/teams", methods=['GET', 'POST'])
@@ -69,6 +79,7 @@ def teams_result(team):
     return render_template('/teams-result.html', roster=roster, team=team)
 
 
+
 @app.route("/seasons")
 def seasons():
     return render_template('seasons.html')
@@ -82,6 +93,7 @@ def leaders():
         return render_template('leaders.html', data=data, form=form)
     data = leader.get_season_leaders()
     return render_template('leaders.html', data=data, form=form)
+
 
 
 @app.route("/scores")
@@ -100,6 +112,7 @@ def draft():
         currYear += 1
     data = [d.get_draft_class(currYear-1), currYear-1]
     return render_template('draft.html', data=data, form=form)
+
 
 
 if __name__ == "__main__":
